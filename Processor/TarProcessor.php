@@ -29,9 +29,9 @@ class TarProcessor extends BaseProcessor implements ProcessorInterface
 
         return sprintf('tar %s c -C %s . | gzip %s > %s',
             implode(' ', $tarParams),
-            ProcessUtils::escapeArgument($basePath),
+            escapeshellarg($basePath),
             implode(' ', $zipParams),
-            ProcessUtils::escapeArgument($archivePath)
+            escapeshellarg($archivePath)
         );
     }
 
