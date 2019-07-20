@@ -1,9 +1,13 @@
 <?php
 namespace Dizda\CloudBackupBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Dizda\CloudBackupBundle\Manager\BackupManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Run backup command.
@@ -11,8 +15,30 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Jonathan Dizdarevic <dizda@dizda.fr>
  * @author István Manzuk <istvan.manzuk@gmail.com>
  */
-class BackupCommand extends ContainerAwareCommand
+class BackupCommand extends Command
 {
+    /**
+     * @var BackupManager
+     */
+    protected $backupManager;
+
+    /**
+     * @var Kernel
+     */
+    protected $kernel;
+
+    /**
+     * @param ContainerInterface $container
+     * @param Kernel $kernel
+     */
+    public function __construct(BackupManager $backupManager, Kernel $kernel)
+    {
+        $this->backupManager = $backupManager;
+        $this->kernel = $kernel;
+
+        parent::__construct();
+    }
+
     /**
      * Configure the command.
      */
@@ -31,9 +57,7 @@ class BackupCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkEnvironment($output);
-
-        if (!$this->getContainer()->get('dizda.cloudbackup.manager.backup')->execute()) {
+        if (!$this->backupManager->execute()) {
             $output->writeln('<error>Something went terribly wrong. We could not create a backup. Read your log files to see what caused this error.</error>');
 
             return 1; //error
@@ -42,18 +66,4 @@ class BackupCommand extends ContainerAwareCommand
         $output->writeln('<info>Backup complete.</info>');
     }
 
-    /**
-     * Print a warning if we do not run the command in production environment
-     *
-     * @param OutputInterface $output
-     */
-    protected function checkEnvironment(OutputInterface $output)
-    {
-        if ($this->getContainer()->get('kernel')->getEnvironment() !== 'prod') {
-            $output->writeln('<bg=yellow>                                                                            </bg=yellow>');
-            $output->writeln('<bg=yellow;options=bold;fg=black>  Warning:                                                                  </bg=yellow;options=bold;fg=black>');
-            $output->writeln('<bg=yellow;fg=black>  You should run the command in production environment ("--env=prod")       </bg=yellow;fg=black>');
-            $output->writeln('<bg=yellow>                                                                            </bg=yellow>');
-        }
-    }
 }
