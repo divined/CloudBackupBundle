@@ -179,3 +179,11 @@ services:
             - '@dizda.cloudbackup.manager.restore'
         tags:
             - { name: console.command }
+
+    dizda.cloudbackup.command.backup:
+        class: Dizda\CloudBackupBundle\Command\BackupCommand
+        arguments:
+            - '@dizda.cloudbackup.manager.backup'
+            - '@kernel'
+        tags:
+            - { name: console.command }
