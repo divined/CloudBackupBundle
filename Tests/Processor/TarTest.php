@@ -23,28 +23,28 @@ class TarTest extends \PHPUnit_Framework_TestCase
         $processor = new TarProcessor(array());
         $this->assertEquals(
             $processor->getCompressionCommand($archivePath, $outputPath),
-            "tar  c -C ". ProcessUtils::escapeArgument($outputPath)." . | gzip  > ". ProcessUtils::escapeArgument($archivePath)
+            "tar  c -C ". escapeshellarg($outputPath)." . | gzip  > ". escapeshellarg($archivePath)
         );
 
         // compress with password - password not used in tar processor
         $processor = new TarProcessor(array('password' => 'qwerty'));
         $this->assertEquals(
             $processor->getCompressionCommand($archivePath, $outputPath),
-            "tar  c -C ". ProcessUtils::escapeArgument($outputPath)." . | gzip  > ". ProcessUtils::escapeArgument($archivePath)
+            "tar  c -C ". escapeshellarg($outputPath)." . | gzip  > ". escapeshellarg($archivePath)
         );
 
         // compress with compression rate = 0
         $processor = new TarProcessor(array('compression_ratio' => 0));
         $this->assertEquals(
             $processor->getCompressionCommand($archivePath, $outputPath),
-            "tar  c -C ". ProcessUtils::escapeArgument($outputPath)." . | gzip -0 > ". ProcessUtils::escapeArgument($archivePath)
+            "tar  c -C ". escapeshellarg($outputPath)." . | gzip -0 > ". escapeshellarg($archivePath)
         );
 
         // compress with compression rate = 9
         $processor = new TarProcessor(array('compression_ratio' => 9));
         $this->assertEquals(
             $processor->getCompressionCommand($archivePath, $outputPath),
-            "tar  c -C ". ProcessUtils::escapeArgument($outputPath)." . | gzip -9 > ". ProcessUtils::escapeArgument($archivePath)
+            "tar  c -C ". escapeshellarg($outputPath)." . | gzip -9 > ". escapeshellarg($archivePath)
         );
     }
 }
