@@ -159,7 +159,7 @@ class MySQL extends BaseDatabase implements RestorableDatabaseInterface
             $this->auth,
             $this->database,
             $this->ignoreTables,
-            ProcessUtils::escapeArgument($this->dataPath.$this->fileName)
+            escapeshellarg($this->dataPath.$this->fileName)
         );
     }
 
@@ -186,7 +186,7 @@ class MySQL extends BaseDatabase implements RestorableDatabaseInterface
         $command = sprintf('mysql %s %s < %s',
             $restoreAuth,
             $this->params['database'],
-            ProcessUtils::escapeArgument(sprintf('%smysql/%s', $this->restoreFolder, $this->fileName))
+            escapeshellarg(sprintf('%smysql/%s', $this->restoreFolder, $this->fileName))
         );
 
         return $command;
